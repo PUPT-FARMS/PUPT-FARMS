@@ -370,3 +370,54 @@
         </nav>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    //logout
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Logout',
+            text: "Are you sure you want to logout?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log me out!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('{{ route('admin-logout') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({
+                            '_token': '{{ csrf_token() }}'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '{{ route('login') }}';
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Logout failed.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            'An unexpected error occurred.',
+                            'error'
+                        );
+                        console.error('Error:', error);
+                    });
+            }
+        });
+    });
+</script>
