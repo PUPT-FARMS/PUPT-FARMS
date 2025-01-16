@@ -55,6 +55,9 @@
 
 <body>
     @include('partials.faculty-sidebar')
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
 </body>
 
 </html>
