@@ -190,6 +190,39 @@
                     }
                 });
             }
+            //storage
+            function initializeStorageChart() {
+                var ctx = document.getElementById('storageChart');
+                if (!ctx) {
+                    console.error('storageChart canvas not found');
+                    return;
+                }
+                var storageChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [
+                            'Used Storage ({{ $formattedTotalStorageUsed }})',
+                            'Available Storage ({{ $formattedStorageAvailable }})'
+                        ],
+                        datasets: [{
+                            data: [{{ $totalStorageUsed }}, {{ $storageAvailable }}],
+                            backgroundColor: ['#FF6384', '#36A2EB'],
+                            hoverBackgroundColor: ['#FF6384', '#36A2EB']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '50%',
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Storage Usage'
+                            }
+                        }
+                    }
+                });
+            }
         </script>
 </body>
 
