@@ -54,6 +54,7 @@
 </head>
 
 <body>
+    @include('partials.faculty-sidebar')
 </body>
 
 </html>
