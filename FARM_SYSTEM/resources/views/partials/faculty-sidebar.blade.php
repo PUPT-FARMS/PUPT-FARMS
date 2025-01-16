@@ -330,3 +330,173 @@
         </nav>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Logout',
+            text: "Are you sure you want to logout?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, logout!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('{{ route('log-logout') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.indexOf('application/json') !== -1) {
+                            return response.json().then(data => ({
+                                data,
+                                response
+                            }));
+                        } else {
+                            return response.text().then(text => ({
+                                text,
+                                response
+                            }));
+                        }
+                    })
+                    .then(({
+                        data,
+                        text,
+                        response
+                    }) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        if (data) {
+                            if (data.status === 'success') {
+                                window.location.href = '{{ route('login') }}';
+                            } else {
+                                throw new Error(data.message || 'Logout failed');
+                            }
+                        } else if (text) {
+                            console.error('Received HTML response instead of JSON:', text);
+                            throw new Error('Received unexpected HTML response');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error!', 'An unexpected error occurred during logout.', 'error');
+                    });
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(document).ready(function() {
+            const visitedNotifications = new Set(
+                JSON.parse(sessionStorage.getItem('visitedNotifications') || '[]')
+            );
+
+            function updateNotificationCount() {
+                $.get('{{ route('notifications.count') }}', function(data) {
+                    if (data.count > 0) {
+                        $('#notification-count').text(data.count).show();
+                    } else {
+                        $('#notification-count').hide();
+                    }
+                }).fail(function(xhr, status, error) {
+                    console.error('Failed to fetch notification count:', status, error);
+                });
+            }
+
+            $('#navbarDropdownMenuLink1').click(function(e) {
+                $.post('{{ route('notifications.mark-read') }}', function() {
+                    $('#notification-count').hide();
+
+                    $('.list-group-item').each(function() {
+                        const notificationId = $(this).data('notification-id');
+                        if ($(this).data('read-status') === 'unread') {
+                            $(this).addClass('notification-visited');
+                            visitedNotifications.add(notificationId);
+                        }
+                    });
+
+                    sessionStorage.setItem('visitedNotifications',
+                        JSON.stringify(Array.from(visitedNotifications)));
+
+                }).fail(function() {
+                    console.error('Failed to mark notifications as read.');
+                });
+            });
+
+            function updateNotifications() {
+                $.get('{{ route('notifications.get') }}', function(data) {
+                    var $notificationList = $('#notification-items');
+                    $notificationList.empty();
+
+                    if (data.notifications.length > 0) {
+                        data.notifications.forEach(function(notification) {
+                            const wasVisited = visitedNotifications.has(notification
+                                .id);
+
+                            var $notification = $('<a>')
+                                .attr('href', notification.url)
+                                .attr('data-notification-id', notification.id)
+                                .attr('data-read-status', notification.is_read ?
+                                    'read' : 'unread')
+                                .addClass('list-group-item list-group-item-action')
+                                .addClass(!notification.is_read ?
+                                    'unread-notification' : '')
+                                .addClass(wasVisited ? 'notification-visited' : '')
+                                .html(`
+                            <div class="notification-info">
+                                <div class="notification-list-user-img">
+                                    <i class="fas fa-user-circle user-avatar-md" style="font-size:30px;"></i>
+                                </div>
+                                <div class="notification-list-user-block">
+                                    <span class="notification-list-user-name mr-0">${notification.sender}</span>
+                                    <span>${notification.message}</span>
+                                    <div class="notification-date">
+                                        ${notification.created_at_formatted}
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+
+                            $notificationList.append($notification);
+                        });
+                    } else {
+                        $notificationList.html(
+                            '<div class="text-center p-3">No notifications available</div>');
+                    }
+                }).fail(function() {
+                    console.error('Failed to fetch notifications.');
+                });
+            }
+
+            $(document).on('click', '.list-group-item', function(e) {
+                const notificationId = $(this).data('notification-id');
+                if ($(this).data('read-status') === 'unread') {
+                    visitedNotifications.add(notificationId);
+                    sessionStorage.setItem('visitedNotifications',
+                        JSON.stringify(Array.from(visitedNotifications)));
+                }
+            });
+
+            setInterval(updateNotificationCount, 30000);
+            setInterval(updateNotifications, 30000);
+            updateNotificationCount();
+            updateNotifications();
+        });
+    });
+</script>
