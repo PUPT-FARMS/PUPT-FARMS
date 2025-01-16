@@ -184,6 +184,61 @@
         <!-- ============================================================== -->
         <!-- end main wrapper  -->
         <!-- ============================================================== -->
+
+       <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+            const bulkRestoreForm = document.getElementById('bulk-restore-form');
+            const restoreSelectedButton = document.getElementById('restore-selected');
+
+            selectAllCheckbox.addEventListener('change', function() {
+                fileCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateRestoreButtonVisibility();
+            });
+
+            fileCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateRestoreButtonVisibility);
+            });
+
+            function updateRestoreButtonVisibility() {
+                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
+                restoreSelectedButton.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
+            }
+
+            bulkRestoreForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
+                if (checkedBoxes.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No files selected',
+                        text: 'Please select at least one file to restore.'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to restore the selected files.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, restore them!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        bulkRestoreForm.submit();
+                    }
+                });
+            });
+
+            updateRestoreButtonVisibility();
+        });
+        </script>
 </body>
 
 </html>
