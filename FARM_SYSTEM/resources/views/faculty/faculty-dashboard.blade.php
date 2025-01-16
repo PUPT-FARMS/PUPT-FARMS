@@ -223,6 +223,15 @@
                     }
                 });
             }
+
+            //generate random color
+            function generateRandomLightColor() {
+                const hue = Math.floor(Math.random() * 360);
+                const saturation = 60 + Math.floor(Math.random() * 20);
+                const lightness = 75 + Math.floor(Math.random() * 10);
+
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
         </script>
 </body>
 
