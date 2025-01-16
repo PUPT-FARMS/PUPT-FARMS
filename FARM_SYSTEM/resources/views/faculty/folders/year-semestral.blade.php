@@ -52,3 +52,5 @@
             </div>
         </div>
     </div>
+
+    @include('partials.faculty-footer')
