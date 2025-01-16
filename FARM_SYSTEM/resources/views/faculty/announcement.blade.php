@@ -184,6 +184,84 @@
         <!-- ============================================================== -->
         <!-- end main wrapper  -->
         <!-- ============================================================== -->
+
+       <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+            const bulkRestoreForm = document.getElementById('bulk-restore-form');
+            const restoreSelectedButton = document.getElementById('restore-selected');
+
+            selectAllCheckbox.addEventListener('change', function() {
+                fileCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateRestoreButtonVisibility();
+            });
+
+            fileCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateRestoreButtonVisibility);
+            });
+
+            function updateRestoreButtonVisibility() {
+                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
+                restoreSelectedButton.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
+            }
+
+            bulkRestoreForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
+                if (checkedBoxes.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No files selected',
+                        text: 'Please select at least one file to restore.'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to restore the selected files.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, restore them!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        bulkRestoreForm.submit();
+                    }
+                });
+            });
+
+            updateRestoreButtonVisibility();
+        });
+        </script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="../../../../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
+            <script src="../../../../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <script src="../../../../asset/vendor/slimscroll/jquery.slimscroll.js"></script>
+            <script src="../../../../asset/vendor/multi-select/js/jquery.multi-select.js"></script>
+            <script src="../../../../asset/libs/js/main-js.js"></script>
+            <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+            <script src="../../../../asset/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+            <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+            <script src="../../../../asset/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+            <script src="../../../../asset/vendor/datatables/js/data-table.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+            <script src="https://cdn.datatables.net/rowgroup/1.0.4/js/dataTables.rowGroup.min.js"></script>
+            <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+            <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+            <script src="../../../../asset/vendor/datatables/js/loading.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>
