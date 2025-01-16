@@ -420,4 +420,186 @@
             }
         });
     });
+
+    // notification
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        const visitedNotifications = new Set(
+            JSON.parse(sessionStorage.getItem('adminVisitedNotifications') || '[]')
+        );
+
+        function updateNotificationCountDisplay(count) {
+            var $countElement = $('#notification-count-admin');
+            if (count > 0) {
+                $countElement.text(count).show();
+            } else {
+                $countElement.hide();
+            }
+        }
+
+        function updateNotificationCount() {
+            $.get('{{ route('admin.notifications.count') }}', function(data) {
+                updateNotificationCountDisplay(data.count);
+            }).fail(function() {
+                console.error('Failed to fetch notification count.');
+            });
+        }
+
+        $('#navbarDropdownMenuLink1').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            $.post('{{ route('admin.notifications.markAllAsRead') }}', function() {
+                $('#notification-count-admin').hide();
+
+                $('.list-group-item').each(function() {
+                    const notificationId = $(this).data('notification-id');
+                    if ($(this).data('read-status') === 'unread') {
+                        $(this).addClass('notification-visited');
+                        visitedNotifications.add(notificationId);
+                    }
+                });
+
+                sessionStorage.setItem('adminVisitedNotifications',
+                    JSON.stringify(Array.from(visitedNotifications)));
+
+            }).fail(function() {
+                console.error('Failed to mark notifications as read.');
+            });
+
+            $('.notification-dropdown').toggleClass('show');
+        });
+
+        $(document).on('click', '.list-group-item', function(e) {
+            e.preventDefault();
+            const $this = $(this);
+            const notificationId = $this.data('notification-id');
+
+            $.post('{{ route('admin.notifications.markAsRead') }}', {
+                notification_id: notificationId
+            }, function() {
+                if ($this.data('read-status') === 'unread') {
+                    $this.addClass('notification-visited');
+                    visitedNotifications.add(notificationId);
+                    sessionStorage.setItem('adminVisitedNotifications',
+                        JSON.stringify(Array.from(visitedNotifications)));
+                }
+                updateNotificationCount();
+            }).fail(function() {
+                console.error('Failed to mark notification as read.');
+            });
+
+            window.location.href = $this.attr('href');
+        });
+
+        function updateNotifications() {
+            $.get('{{ route('admin.notifications.get') }}', function(data) {
+                var $notificationList = $('#admin-notification-items');
+                $notificationList.empty();
+
+                if (data.notifications && data.notifications.length > 0) {
+                    data.notifications.forEach(function(notification) {
+                        const wasVisited = visitedNotifications.has(notification.id);
+
+                        var $notification = $('<a>')
+                            .attr('href', notification.url)
+                            .attr('data-notification-id', notification.id)
+                            .attr('data-read-status', notification.is_read ? 'read' : 'unread')
+                            .addClass('list-group-item list-group-item-action')
+                            .addClass(!notification.is_read ? 'unread-notification' : '')
+                            .addClass(wasVisited ? 'notification-visited' : '')
+                            .html(`
+                            <div class="notification-info">
+                                <div class="notification-list-user-img">
+                                    <i class="fas fa-user-circle user-avatar-md" style="font-size:30px;"></i>
+                                </div>
+                                <div class="notification-list-user-block">
+                                    <span class="notification-list-user-name mr-0">${notification.sender}</span>
+                                    <span>${notification.message}</span>
+                                    <div class="notification-date">
+                                        ${notification.created_at}
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+
+                        $notificationList.append($notification);
+                    });
+                } else {
+                    $notificationList.html(
+                        '<div class="text-center p-3">No notifications available</div>');
+                }
+            }).fail(function() {
+                console.error('Failed to fetch notifications.');
+            });
+        }
+
+        setInterval(updateNotificationCount, 30000);
+        setInterval(updateNotifications, 30000);
+        updateNotificationCount();
+        updateNotifications();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const badge = document.getElementById('request-badge');
+        const countDisplay = document.getElementById('request-count');
+        const requestLink = document.getElementById('request-upload-access');
+
+        function checkNewRequests() {
+            fetch('/admin/check-new-requests')
+                .then(response => response.json())
+                .then(data => {
+                    const requestCount = data.new_requests_count;
+                    countDisplay.textContent = requestCount;
+
+                    if (requestCount > 0) {
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error fetching new requests:', error));
+        }
+
+        function markRequestsAsRead() {
+            fetch('/admin/mark-requests-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        badge.style.display = 'none';
+                        countDisplay.textContent = '0';
+                    }
+                })
+                .catch(error => console.error('Error marking requests as read:', error));
+        }
+
+        if (window.location.pathname.includes('request-upload-access')) {
+            markRequestsAsRead();
+        }
+
+        requestLink.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            markRequestsAsRead();
+
+            setTimeout(() => {
+                window.location.href = requestLink.href;
+            }, 100);
+        });
+
+        setInterval(checkNewRequests, 5000);
+
+        checkNewRequests();
+    });
 </script>
