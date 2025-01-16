@@ -58,6 +58,132 @@
     <div id="loading-spinner" class="loading-spinner">
         <div class="spinner"></div>
     </div>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-ecommerce">
+            <div class="container-fluid dashboard-content ">
+                <!-- ============================================================== -->
+                <!-- pageheader  -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="page-header">
+                            <h2 class="pageheader-title">Archive Files</h2>
+                            <div class="page-breadcrumb">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#!" class="breadcrumb-link"
+                                                >Menu</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ route('faculty.view-archive') }}"
+                                                class="breadcrumb-link" style=" color: #3d405c;">Archive</a></li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- end pageheader  -->
+                <!-- ============================================================== -->
+                <div class="ecommerce-widget">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <div class="card-header fw-bold">
+                                All Archive Files
+                            </div>
+                            <div class="card-body">
+                                @if (session('success'))
+                                    <div class="alert alert-success text-center">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+
+                                <form id="bulk-restore-form" action="{{ route('files.bulkUnarchive') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning btn-sm mb-3"
+                                        id="restore-selected">Restore</button>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th><input type="checkbox" id="select-all"></th>
+                                                    <th>No.</th>
+                                                    <th>Date & Time</th>
+                                                    <th>Semester</th>
+                                                    <th>Program</th>
+                                                    <th>Course & Course Code</th>
+                                                    <th>Year & Section</th>
+                                                    <th>File Name</th>
+                                                    <th>Status</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($uploadedFiles as $file)
+                                                    <tr>
+                                                        <td><input type="checkbox" name="file_ids[]"
+                                                                value="{{ $file->courses_files_id }}"
+                                                                class="file-checkbox"></td>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($file->created_at)->locale('en_PH')->format('F j, Y, g:i A') }}
+                                                        </td>
+                                                        <td>{{ $file->courseSchedule->sem_academic_year }}</td>
+                                                        <td>{{ $file->courseSchedule->program }}</td>
+                                                        <td>{{ $file->subject }} -
+                                                            {{ $file->courseSchedule->course_code }}</td>
+                                                        <td>{{ $file->courseSchedule->year_section }}</td>
+                                                        <td>
+                                                            <a href="{{ Storage::url('/' . $file->files) }}"
+                                                                target="_blank"
+                                                                style="color: rgb(65, 65, 231); text-decoration: underline;">
+                                                                {{ $file->original_file_name }}
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            @if ($file->status === 'To Review')
+                                                                <span
+                                                                    class="badge badge-primary">{{ $file->status }}</span>
+                                                            @elseif($file->status === 'Approved')
+                                                                <span
+                                                                    class="badge badge-success">{{ $file->status }}</span>
+                                                            @elseif($file->status === 'Declined')
+                                                                <span
+                                                                    class="badge badge-danger">{{ $file->status }}</span>
+                                                                @if ($file->declined_reason)
+                                                                    <div class="mt-2">Declined Reason:
+                                                                        {{ $file->declined_reason }}</div>
+                                                                @endif
+                                                            @else
+                                                                <span
+                                                                    class="badge bg-secondary">{{ $file->status }}</span>
+                                                            @endif
+                                                        </td>
+                                                        {{-- <td>
+                                                            <button type="button" class="btn btn-warning btn-sm mr-1 restore-single" data-file-id="{{ $file->courses_files_id }}">Restore</button>
+                                                        </td> --}}
+                                                    </tr>
+                                                @empty
+
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end wrapper  -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- end main wrapper  -->
+        <!-- ============================================================== -->
 </body>
 
 </html>
