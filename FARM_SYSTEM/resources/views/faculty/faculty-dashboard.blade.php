@@ -232,6 +232,101 @@
 
                 return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
+
+            //percentage per main requirements
+            function initializeFolderChart() {
+                const folderCtx = document.getElementById('folderBarChart');
+                if (!folderCtx) {
+                    console.error('folderBarChart canvas not found');
+                    return;
+                }
+
+                const folderChartData = @json($folderChartData);
+                const datasets = [];
+                const labels = folderChartData.map(folder => folder.name);
+
+                const subfolderColors = {};
+
+                folderChartData.forEach((mainFolder, folderIndex) => {
+                    mainFolder.subfolders.forEach((subfolder, subfolderIndex) => {
+                        if (!subfolderColors[subfolder.name]) {
+                            subfolderColors[subfolder.name] = generateRandomLightColor();
+                        }
+
+                        datasets.push({
+                            label: `${mainFolder.name} - ${subfolder.name}`,
+                            data: folderChartData.map(folder => {
+                                const subfolderData = folder.subfolders.find(sub => sub.name ===
+                                    subfolder.name);
+                                return subfolderData ? subfolderData.percentage : 0;
+                            }),
+                            backgroundColor: subfolderColors[subfolder.name],
+                            borderColor: 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1
+                        });
+                    });
+                });
+
+                new Chart(folderCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: false,
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage (%)'
+                                }
+                            },
+                            y: {
+                                stacked: false,
+                                title: {
+                                    display: true,
+                                    text: 'Main Folders'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const mainFolder = folderChartData[context.dataIndex];
+                                        const subfolder = mainFolder.subfolders.find(sub => sub.name === context
+                                            .dataset.label.split(' - ')[1]);
+                                        if (subfolder) {
+                                            return `${subfolder.name}: ${subfolder.percentage.toFixed(2)}% (${subfolder.user_files_count}/${subfolder.total_files_count}) - ${subfolder.academic_year}`;
+                                        }
+                                        return `${context.dataset.label}: 0%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function initializeAllCharts() {
+                initializeStatusBarChart();
+                initializeStorageChart();
+                initializeFolderChart();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initializeAllCharts, 100);
+            });
         </script>
 </body>
 
