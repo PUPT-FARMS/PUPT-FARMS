@@ -128,7 +128,7 @@
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+            
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto navbar-right-top">
                     <li class="nav-item dropdown notification">
@@ -299,7 +299,7 @@
                                 </span>
                             </a>
                         </li> --}}
-
+                        
                         <li class="nav-item">
                             <a class="nav-link {{ request()->route('folder_name_id') && in_array(request()->route('folder_name_id'), $folders->where('main_folder_name', 'Classroom Management')->pluck('folder_name_id')->toArray()) ? 'active' : '' }}"
                                 href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-6"
@@ -314,7 +314,7 @@
                                                 href="{{ route('admin.accomplishment.department', ['folder_name_id' => $folder->folder_name_id]) }}">
                                                 {{ $folder->folder_name }}
                                              </a>
-
+                                        
                                         </li>
                                     @endforeach
                                 </ul>

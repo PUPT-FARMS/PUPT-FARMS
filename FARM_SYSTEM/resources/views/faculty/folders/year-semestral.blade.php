@@ -15,12 +15,12 @@
             </div>
         </div>
     </div>
-
+    
     <div class="row">
         <div class="col-md-8 col-lg-10 mx-auto">
             <div class="card mt-3">
                 <div class="card-body">
-
+                
 
                     <table id="dataTable" class="table table-striped">
                         <thead>
@@ -54,3 +54,4 @@
     </div>
 
     @include('partials.faculty-footer')
+   

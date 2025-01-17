@@ -50,7 +50,7 @@ class AccomplishmentController extends Controller
             'departments' => $departments,
         ]);
     }
-
+    
     //show the faculty members per department
     public function showAccomplishmentDepartment($department, $folder_name_id)
     {
@@ -99,7 +99,7 @@ class AccomplishmentController extends Controller
             'folderName' => $folder->folder_name
         ]);
     }
-
+        
     //show main requirements
     public function viewFacultyAccomplishments($user_login_id)
     {
@@ -138,7 +138,7 @@ class AccomplishmentController extends Controller
             'department' => $departmentName,
         ]);
     }
-
+    
     //show folder names 
     public function viewFolderNames($user_login_id, $main_folder_name)
     {

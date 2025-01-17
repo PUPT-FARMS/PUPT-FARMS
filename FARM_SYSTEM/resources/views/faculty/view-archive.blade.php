@@ -164,7 +164,7 @@
                                                         </td> --}}
                                                     </tr>
                                                 @empty
-
+                                                   
                                                 @endforelse
                                             </tbody>
                                         </table>
@@ -191,26 +191,26 @@
             const fileCheckboxes = document.querySelectorAll('.file-checkbox');
             const bulkRestoreForm = document.getElementById('bulk-restore-form');
             const restoreSelectedButton = document.getElementById('restore-selected');
-
+    
             selectAllCheckbox.addEventListener('change', function() {
                 fileCheckboxes.forEach(checkbox => {
                     checkbox.checked = this.checked;
                 });
                 updateRestoreButtonVisibility();
             });
-
+    
             fileCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', updateRestoreButtonVisibility);
             });
-
+    
             function updateRestoreButtonVisibility() {
                 const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
                 restoreSelectedButton.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
             }
-
+    
             bulkRestoreForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-
+    
                 const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
                 if (checkedBoxes.length === 0) {
                     Swal.fire({
@@ -220,7 +220,7 @@
                     });
                     return;
                 }
-
+    
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You are about to restore the selected files.",
@@ -235,7 +235,7 @@
                     }
                 });
             });
-
+    
             updateRestoreButtonVisibility();
         });
         </script>

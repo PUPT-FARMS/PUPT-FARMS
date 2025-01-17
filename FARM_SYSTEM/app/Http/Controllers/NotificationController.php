@@ -65,6 +65,7 @@ class NotificationController extends Controller
     
         return response()->json(['notifications' => $notifications]);
     }
+        
 
     //get admin notification
     public function getAdminNotifications()
@@ -107,7 +108,7 @@ class NotificationController extends Controller
     
         return response()->json(['count' => $count]);
     }
-
+    
     public function markAsRead(Request $request)
     {
         $notificationId = $request->input('notification_id');
@@ -127,7 +128,7 @@ class NotificationController extends Controller
         
         return response()->json(['status' => 'success']);
     }
-
+    
     //log click
     public function logClick(Request $request)
     {

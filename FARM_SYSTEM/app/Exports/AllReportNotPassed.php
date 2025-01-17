@@ -185,5 +185,4 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
     
         return $data;
     }
-
 }

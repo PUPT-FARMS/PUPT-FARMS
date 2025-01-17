@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
 use App\Models\UserLogin;
 
+
 class SendAnnouncementEmails extends Command
 {
     /**
@@ -14,7 +15,7 @@ class SendAnnouncementEmails extends Command
      * @var string
      */
     protected $signature = 'send:announcement-emails {announcementId}';
-        
+
     /**
      * The console command description.
      *
@@ -71,4 +72,5 @@ class SendAnnouncementEmails extends Command
             \Log::error("Failed to send email to {$email}: " . $e->getMessage());
         }
     }
+        
 }

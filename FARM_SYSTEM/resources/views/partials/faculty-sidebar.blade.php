@@ -148,7 +148,7 @@
                                                     $semester = $coursesFile->semester;
                                                 @endphp
                                                 <a href="{{ route('faculty.accomplishment.uploaded-files', [
-
+               
                                                     'folder_name_id' => $notification->folder_name_id,
 
                                                 ]) }}"

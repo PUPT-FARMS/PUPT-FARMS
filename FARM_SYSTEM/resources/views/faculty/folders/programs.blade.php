@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="row">
             <div class="col-md-8 col-lg-10 mx-auto">
                 <div class="card mt-3">
@@ -43,7 +43,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-
+                            
                         </table>
                     </div>
                 </div>

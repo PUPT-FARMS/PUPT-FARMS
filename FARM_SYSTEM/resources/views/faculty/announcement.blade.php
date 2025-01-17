@@ -1,54 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Archive</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../../../../asset/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="icon" href="{{ asset('assets/images/pup-logo.png') }}" type="image/x-icon">
-    <link href="../../../../asset/vendor/fonts/circular-std/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../../asset/libs/css/style.css">
-    <link rel="stylesheet" href="../../../../asset/vendor/fonts/fontawesome/css/fontawesome-all.css">
-    <link rel="stylesheet" type="text/css" href="../../../../asset/vendor/datatables/css/dataTables.bootstrap4.css">
-    <link rel="stylesheet" type="text/css" href="../../../../asset/vendor/datatables/css/buttons.bootstrap4.css">
-    <link rel="stylesheet" type="text/css" href="../../../../asset/vendor/datatables/css/select.bootstrap4.css">
-    <link rel="stylesheet" type="text/css" href="../../../../asset/vendor/datatables/css/fixedHeader.bootstrap4.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Required meta tags -->
+    @include('partials.faculty-header')
+
+
+    <title>Announcement</title>
     <style>
-        .body-modal {
-            max-height: 480px;
-            overflow-y: auto;
-        }
-
-        .view-modal {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .bordered-file-input {
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-            padding: 0.375rem 0.75rem;
-            background-color: #fff;
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        }
-
-        .modal-dialog {
-            max-width: 600px;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        p {
-            color: #3d405c;
-        }
-
-        strong {
-            color: rgb(27, 27, 27);
+        .toggle-dropdown {
+            position: absolute;
+            margin-left: 20px;
+            top: 100%;
+            transform: translateX(-100%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: white;
+            border-radius: 4px;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -67,14 +35,14 @@
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="page-header">
-                            <h2 class="pageheader-title">Archive Files</h2>
+                            <h2 class="pageheader-title">Announcement</h2>
                             <div class="page-breadcrumb">
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="#!" class="breadcrumb-link"
                                                 >Menu</a></li>
-                                        <li class="breadcrumb-item"><a href="{{ route('faculty.view-archive') }}"
-                                                class="breadcrumb-link" style=" color: #3d405c;">Archive</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ route('faculty.announcement') }}"
+                                                class="breadcrumb-link" style=" color: #3d405c;">Announcement</a></li>
                                     </ol>
                                 </nav>
                             </div>
@@ -83,185 +51,163 @@
                 </div>
 
                 <!-- ============================================================== -->
-                <!-- end pageheader  -->
+                <!-- Page Header -->
                 <!-- ============================================================== -->
-                <div class="ecommerce-widget">
+                <div class="row">
+
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="card">
-                            <div class="card-header fw-bold">
-                                All Archive Files
-                            </div>
-                            <div class="card-body">
-                                @if (session('success'))
-                                    <div class="alert alert-success text-center">
-                                        {{ session('success') }}
-                                    </div>
-                                @endif
-
-                                <form id="bulk-restore-form" action="{{ route('files.bulkUnarchive') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-warning btn-sm mb-3"
-                                        id="restore-selected">Restore</button>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-bordered first">
-                                            <thead>
-                                                <tr>
-                                                    <th><input type="checkbox" id="select-all"></th>
-                                                    <th>No.</th>
-                                                    <th>Date & Time</th>
-                                                    <th>Semester</th>
-                                                    <th>Program</th>
-                                                    <th>Course & Course Code</th>
-                                                    <th>Year & Section</th>
-                                                    <th>File Name</th>
-                                                    <th>Status</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($uploadedFiles as $file)
-                                                    <tr>
-                                                        <td><input type="checkbox" name="file_ids[]"
-                                                                value="{{ $file->courses_files_id }}"
-                                                                class="file-checkbox"></td>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($file->created_at)->locale('en_PH')->format('F j, Y, g:i A') }}
-                                                        </td>
-                                                        <td>{{ $file->courseSchedule->sem_academic_year }}</td>
-                                                        <td>{{ $file->courseSchedule->program }}</td>
-                                                        <td>{{ $file->subject }} -
-                                                            {{ $file->courseSchedule->course_code }}</td>
-                                                        <td>{{ $file->courseSchedule->year_section }}</td>
-                                                        <td>
-                                                            <a href="{{ Storage::url('/' . $file->files) }}"
-                                                                target="_blank"
-                                                                style="color: rgb(65, 65, 231); text-decoration: underline;">
-                                                                {{ $file->original_file_name }}
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            @if ($file->status === 'To Review')
-                                                                <span
-                                                                    class="badge badge-primary">{{ $file->status }}</span>
-                                                            @elseif($file->status === 'Approved')
-                                                                <span
-                                                                    class="badge badge-success">{{ $file->status }}</span>
-                                                            @elseif($file->status === 'Declined')
-                                                                <span
-                                                                    class="badge badge-danger">{{ $file->status }}</span>
-                                                                @if ($file->declined_reason)
-                                                                    <div class="mt-2">Declined Reason:
-                                                                        {{ $file->declined_reason }}</div>
-                                                                @endif
-                                                            @else
-                                                                <span
-                                                                    class="badge bg-secondary">{{ $file->status }}</span>
-                                                            @endif
-                                                        </td>
-                                                        {{-- <td>
-                                                            <button type="button" class="btn btn-warning btn-sm mr-1 restore-single" data-file-id="{{ $file->courses_files_id }}">Restore</button>
-                                                        </td> --}}
-                                                    </tr>
-                                                @empty
-
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </form>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <div class="col-md-4 col-sm-6 d-none d-md-block">
+                                <input type="text" id="search" class="form-control ml-3 mb-3"
+                                    placeholder="Search announcements..." />
                             </div>
                         </div>
+
+                        <!-- Mobile search input -->
+                        <div class="d-md-none mt-3">
+                            <input type="text" id="search-mobile" class="form-control mb-3"
+                                placeholder="Search announcements..." />
+                        </div>
+                        <div id="announcements-list">
+                            @if ($announcements->isEmpty())
+                                <div class="alert alert-info" role="alert">
+                                    No announcements available.
+                                </div>
+                            @else
+                                <div class="row">
+                                    @foreach ($announcements as $announcement)
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="card-title" style="font-size: 20px;">
+                                                        {{ $announcement->subject }}
+                                                    </h5>
+                                                    <h6 class="card-subtitle text-muted" style="font-size:12px;">
+                                                        {{ \Carbon\Carbon::parse($announcement->created_at)->setTimezone('Asia/Manila')->format('F j, Y, g:i a') }}
+                                                    </h6>
+                                                    <p class="card-subtitle text-muted mt-2" style="font-size:12px;">
+                                                        To:
+                                                        @foreach ($announcement->displayEmails as $email)
+                                                            {{ $email }}@if (!$loop->last)
+                                                                ,
+                                                            @endif
+                                                        @endforeach
+                                                        @if ($announcement->moreEmailsCount > 0)
+                                                            and {{ $announcement->moreEmailsCount }} more
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text">{!! $announcement->message !!}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                  <!-- Pagination -->
+                                  <div class="row ">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center my-4">
+                                            <div class="pagination-info">
+                                                Showing {{ $announcements->firstItem() ?? 0 }} to
+                                                {{ $announcements->lastItem() ?? 0 }} of {{ $announcements->total() }}
+                                                announcements
+                                            </div>
+
+                                            @if ($announcements->hasPages())
+                                                <nav aria-label="Announcements pagination">
+                                                    <ul class="pagination mb-0">
+                                                        {{-- Previous Page --}}
+                                                        @if ($announcements->onFirstPage())
+                                                            <li class="page-item disabled">
+                                                                <span class="page-link">
+                                                                    <i class="fas fa-chevron-left small"></i>
+                                                                </span>
+                                                            </li>
+                                                        @else
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                    href="{{ $announcements->previousPageUrl() }}"
+                                                                    rel="prev">
+                                                                    <i class="fas fa-chevron-left small"></i>
+                                                                </a>
+                                                            </li>
+                                                        @endif
+
+                                                        {{-- Numbered Pages --}}
+                                                        @foreach ($announcements->getUrlRange(1, $announcements->lastPage()) as $page => $url)
+                                                            @if ($page == $announcements->currentPage())
+                                                                <li class="page-item active">
+                                                                    <span class="page-link">{{ $page }}</span>
+                                                                </li>
+                                                            @else
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                        href="{{ $url }}">{{ $page }}</a>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+
+                                                        {{-- Next Page --}}
+                                                        @if ($announcements->hasMorePages())
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                    href="{{ $announcements->nextPageUrl() }}"
+                                                                    rel="next">
+                                                                    <i class="fas fa-chevron-right small"></i>
+                                                                </a>
+                                                            </li>
+                                                        @else
+                                                            <li class="page-item disabled">
+                                                                <span class="page-link">
+                                                                    <i class="fas fa-chevron-right small"></i>
+                                                                </span>
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </nav>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-
-
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- end wrapper  -->
-            <!-- ============================================================== -->
         </div>
         <!-- ============================================================== -->
-        <!-- end main wrapper  -->
+        <!-- End Page Header -->
         <!-- ============================================================== -->
 
-       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectAllCheckbox = document.getElementById('select-all');
-            const fileCheckboxes = document.querySelectorAll('.file-checkbox');
-            const bulkRestoreForm = document.getElementById('bulk-restore-form');
-            const restoreSelectedButton = document.getElementById('restore-selected');
 
-            selectAllCheckbox.addEventListener('change', function() {
-                fileCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                });
-                updateRestoreButtonVisibility();
-            });
+        @include('partials.faculty-footer')
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#search, #search-mobile').on('keyup', function() {
+                    let query = $(this).val();
 
-            fileCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateRestoreButtonVisibility);
-            });
-
-            function updateRestoreButtonVisibility() {
-                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
-                restoreSelectedButton.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
-            }
-
-            bulkRestoreForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const checkedBoxes = document.querySelectorAll('.file-checkbox:checked');
-                if (checkedBoxes.length === 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'No files selected',
-                        text: 'Please select at least one file to restore.'
+                    $.ajax({
+                        url: '{{ route('faculty.announcement.search') }}',
+                        method: 'GET',
+                        data: {
+                            search: query
+                        },
+                        success: function(data) {
+                            $('#announcements-list').html(data);
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.responseText);
+                        }
                     });
-                    return;
-                }
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You are about to restore the selected files.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, restore them!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        bulkRestoreForm.submit();
-                    }
                 });
             });
-
-            updateRestoreButtonVisibility();
-        });
         </script>
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-            <script src="../../../../asset/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="../../../../asset/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="../../../../asset/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <script src="../../../../asset/vendor/multi-select/js/jquery.multi-select.js"></script>
-            <script src="../../../../asset/libs/js/main-js.js"></script>
-            <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-            <script src="../../../../asset/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-            <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-            <script src="../../../../asset/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <script src="../../../../asset/vendor/datatables/js/data-table.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
-            <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
-            <script src="https://cdn.datatables.net/rowgroup/1.0.4/js/dataTables.rowGroup.min.js"></script>
-            <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
-            <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
-            <script src="../../../../asset/vendor/datatables/js/loading.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 </body>
 
 </html>

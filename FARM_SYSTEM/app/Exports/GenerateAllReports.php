@@ -40,8 +40,9 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
                 ->toArray();
         }
     }
-
-    public function collection()
+    
+    
+  public function collection()
     {
         $facultyMembers = $this->getAllFaculty();
         
@@ -77,6 +78,9 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
         
         return $data;
     }
+
+
+    
 
     public function headings(): array
     {
@@ -129,6 +133,7 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
 
         return $mappedRow;
     }
+
 
     public function styles(Worksheet $sheet)
     {
@@ -212,8 +217,8 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
         
         return [];
     }
-
-    private function getAllFaculty()
+    
+  private function getAllFaculty()
     {
         return UserLogin::where('role', 'faculty')
             ->orderBy('surname')
