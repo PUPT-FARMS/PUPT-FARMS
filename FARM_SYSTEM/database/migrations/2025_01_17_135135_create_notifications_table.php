@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('courses_files_id');
+            $table->unsignedBigInteger('user_login_id');
             $table->timestamps();
         });
     }
