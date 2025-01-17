@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->unsignedBigInteger('sender_user_login_id')->nullable(); 
+            $table->unsignedBigInteger('sender_user_login_id')->nullable();
+            $table->foreign('sender_user_login_id')->references('user_login_id')->on('user_login')->onDelete('cascade');
         });
     }
 
