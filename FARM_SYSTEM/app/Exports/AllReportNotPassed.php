@@ -13,5 +13,6 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, ShouldAutoSize
 {
+    protected $facultyInfo;
 
 }
