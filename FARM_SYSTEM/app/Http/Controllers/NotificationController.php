@@ -40,4 +40,29 @@ class NotificationController extends Controller
     
         return response()->json(['status' => 'success']);
     }
+
+    public function getNotifications(Request $request)
+    {
+        $lastId = $request->input('last_id', 0);
+    
+        $notifications = Notification::where('user_login_id', Auth::id())
+                                    ->where('id', '>', $lastId)
+                                    ->orderBy('created_at', 'desc')
+                                    ->orderBy('id', 'desc')
+                                    ->take(10)
+                                    ->get()
+                                    ->map(function ($notification) {
+                                        return [
+                                            'id' => $notification->id,
+                                            'sender' => $notification->sender ? $notification->sender->first_name . ' ' . $notification->sender->surname : 'Unknown',
+                                            'message' => $notification->notification_message,
+                                            'created_at' => $notification->created_at->format('Y-m-d H:i:s'),
+                                            'created_at_formatted' => $notification->created_at->format('F j, Y, g:ia'),
+                                            'is_read' => (bool)$notification->is_read,
+                                            'url' => route('faculty.accomplishment.uploaded-files', ['folder_name_id' => $notification->folder_name_id])
+                                        ];
+                                    });
+    
+        return response()->json(['notifications' => $notifications]);
+    }
 }
