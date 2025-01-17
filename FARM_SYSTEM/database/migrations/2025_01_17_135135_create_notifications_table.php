@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('folder_name_id');
             $table->string('sender');
             $table->timestamps();
+
+            $table->foreign('courses_files_id')->references('courses_files_id')->on('courses_files')->onDelete('cascade');
         });
     }
 
