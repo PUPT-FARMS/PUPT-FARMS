@@ -138,4 +138,47 @@ class AccomplishmentController extends Controller
             'department' => $departmentName,
         ]);
     }
+
+    //show folder names 
+    public function viewFolderNames($user_login_id, $main_folder_name)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+    
+        $user = auth()->user();
+        $firstName = $user->first_name;
+        $surname = $user->surname;
+    
+        $notifications = Notification::where('user_login_id', $user->user_login_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        $notificationCount = $notifications->where('is_read', 0)->count();
+    
+        $faculty = UserLogin::findOrFail($user_login_id);
+    
+        $folders = FolderName::select('main_folder_name')->distinct()->get(); 
+    
+        $folderNames = FolderName::where('main_folder_name', $main_folder_name)
+            ->get();
+    
+        $department = Department::find($faculty->department_id);
+        $departmentName = $department ? $department->name : '';
+        
+        $currentFolder = $folders->firstWhere('main_folder_name', $main_folder_name);
+    
+        return view('admin.accomplishment.view-folder-names', [
+            'faculty' => $faculty,
+            'folderNames' => $folderNames,
+            'main_folder_name' => $main_folder_name,
+            'notifications' => $notifications,
+            'notificationCount' => $notificationCount,
+            'firstName' => $firstName,
+            'surname' => $surname,
+            'department' => $departmentName,
+            'folders' => $folders,
+            'currentFolder' => $currentFolder, 
+        ]);
+    }
 }
