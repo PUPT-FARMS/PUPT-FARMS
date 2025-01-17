@@ -50,4 +50,53 @@ class AccomplishmentController extends Controller
             'departments' => $departments,
         ]);
     }
+
+    //show the faculty members per department
+    public function showAccomplishmentDepartment($department, $folder_name_id)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+    
+        $user = auth()->user();
+        $firstName = $user->first_name;
+        $surname = $user->surname;
+    
+        $notifications = Notification::where('user_login_id', $user->user_login_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        $notificationCount = $notifications->where('is_read', 0)->count();
+    
+        $folder = FolderName::findOrFail($folder_name_id);
+        $folders = FolderName::all();
+    
+        $decodedDepartment = urldecode($department);
+        
+        // Check if the department exists
+        $departmentRecord = Department::where('name', $decodedDepartment)->first();
+        
+        if (!$departmentRecord) {
+            return redirect()->back()->withErrors(['Department not found']);
+        }
+    
+        $facultyUsers = UserLogin::whereIn('role', ['faculty', 'faculty-coordinator'])
+            ->where('department_id', $departmentRecord->department_id)
+            ->get();
+    
+        return view('admin.accomplishment.view-accomplishment-faculty', [
+            'folders' => $folders,
+            'notifications' => $notifications,
+            'notificationCount' => $notificationCount,
+            'firstName' => $firstName,
+            'surname' => $surname,
+            'user' => $user,
+            'user_login_id' => $user->user_login_id, 
+            'department' => $departmentRecord,  
+            'facultyUsers' => $facultyUsers,
+            'folder_name_id' => $folder_name_id,
+            'folder' => $folder,
+            'folderName' => $folder->folder_name
+        ]);
+    }
 }
