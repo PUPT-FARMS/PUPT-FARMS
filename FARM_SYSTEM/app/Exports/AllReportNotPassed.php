@@ -20,4 +20,10 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
         $this->facultyInfo = $this->getFacultyInfo();
     }
 
+    public function collection()
+    {
+        $folderIds = FolderName::pluck('folder_name_id');
+        \Log::info('Folder IDs:', $folderIds->toArray());
+    }
+
 }
