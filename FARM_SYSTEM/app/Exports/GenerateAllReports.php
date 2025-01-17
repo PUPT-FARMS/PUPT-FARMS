@@ -104,4 +104,29 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
         
         return $count;
     }
+
+    public function map($row): array
+    {
+        Log::info('Mapping row: ' . json_encode($row));
+
+        $mappedRow = [
+            $row['no'],
+            $row['date_submitted'],
+            $row['faculty_name']
+        ];
+
+        foreach ($this->mainFolders as $mainFolder) {
+            foreach ($this->subFolders[$mainFolder] as $folderNameId => $subFolderName) {
+                $value = $row[$subFolderName];
+                $mappedRow[] = $value > 0 ? $value : 'X';
+                Log::info("Mapping folder: {$subFolderName}, Value: {$value}");
+            }
+        }
+
+        $mappedRow[] = $row['semester'];
+
+        Log::info('Mapped row: ' . json_encode($mappedRow));
+
+        return $mappedRow;
+    }
 }
