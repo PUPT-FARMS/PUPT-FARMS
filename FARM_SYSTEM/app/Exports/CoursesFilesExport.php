@@ -13,4 +13,5 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $folderNameId;
+    protected $faculty;
 }
