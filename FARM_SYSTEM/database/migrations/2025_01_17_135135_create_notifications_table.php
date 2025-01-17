@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('courses_files_id')->references('courses_files_id')->on('courses_files')->onDelete('cascade');
+            $table->foreign('user_login_id')->references('user_login_id')->on('user_login')->onDelete('cascade');
         });
     }
 
