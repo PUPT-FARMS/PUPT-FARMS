@@ -3,8 +3,6 @@
 namespace App\Exports;
 
 use App\Models\CoursesFile;
-use App\Models\FolderName;
-use App\Models\UserLogin;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
