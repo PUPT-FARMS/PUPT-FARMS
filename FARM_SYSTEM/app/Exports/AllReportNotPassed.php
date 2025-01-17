@@ -15,4 +15,9 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
 {
     protected $facultyInfo;
 
+    public function __construct()
+    {
+        $this->facultyInfo = $this->getFacultyInfo();
+    }
+
 }
