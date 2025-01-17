@@ -14,4 +14,10 @@ class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, W
 {
     protected $folderNameId;
     protected $faculty;
+
+    public function __construct($folderNameId)
+    {
+        $this->folderNameId = $folderNameId;
+        $this->faculty = $this->getFacultyInfo();
+    }
 }
