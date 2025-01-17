@@ -212,4 +212,12 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
         
         return [];
     }
+
+    private function getAllFaculty()
+    {
+        return UserLogin::where('role', 'faculty')
+            ->orderBy('surname')
+            ->orderBy('first_name')
+            ->get();
+    }
 }
