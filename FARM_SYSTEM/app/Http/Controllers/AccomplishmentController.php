@@ -234,4 +234,73 @@ class AccomplishmentController extends Controller
             'folder' => $folder, 
         ]);
     }
+
+    //show department page
+    public function showDepartmentPage($folder_name_id)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        try {
+            $folder = FolderName::findOrFail($folder_name_id);
+
+            $notifications = Notification::where('user_login_id', $user->user_login_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $notificationCount = $notifications->where('is_read', 0)->count();
+            $departments = Department::orderBy('name', 'asc')->get();
+            
+            $folders = FolderName::all();  
+            
+            $mainFolders = ['Classroom Management', 'Test Administration', 'Syllabus Preparation'];
+
+            $departments = Department::all();
+            $departmentProgress = [];
+            
+            foreach ($departments as $department) {
+                $userIds = UserLogin::where('department_id', $department->department_id)
+                    ->pluck('user_login_id');
+                $totalApprovedFiles = 0;
+                $totalFiles = 0;
+            
+                foreach ($mainFolders as $mainFolder) {
+                    $subFolders = FolderName::where('main_folder_name', $mainFolder)
+                        ->pluck('folder_name_id');
+                    
+                    $totalFiles += CoursesFile::whereIn('user_login_id', $userIds)
+                        ->whereIn('folder_name_id', $subFolders)
+                        ->count();
+            
+                    $totalApprovedFiles += CoursesFile::whereIn('user_login_id', $userIds)
+                        ->whereIn('folder_name_id', $subFolders)
+                        ->where('status', 'Approved')
+                        ->count();
+                }
+            
+                $departmentOverallProgress = ($totalFiles > 0) ? 
+                    ($totalApprovedFiles / $totalFiles) * 100 : 0;
+                $departmentProgress[$department->name] = $departmentOverallProgress;
+            }
+
+            
+            return view('admin.accomplishment.department', [
+                'folders' => $folders,
+                'notifications' => $notifications,
+                'notificationCount' => $notificationCount,
+                'firstName' => $user->first_name,
+                'surname' => $user->surname,
+                'user' => $user,
+                'departments' => $departments,
+                'folder_name_id' => $folder_name_id,
+                'folderName' => $folder->folder_name,
+                'folder' => $folder,
+                'departmentProgress' => $departmentProgress,
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Folder not found.');
+        }
+    }
 }
