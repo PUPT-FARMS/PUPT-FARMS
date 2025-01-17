@@ -65,4 +65,32 @@ class NotificationController extends Controller
     
         return response()->json(['notifications' => $notifications]);
     }
+
+    //get admin notification
+    public function getAdminNotifications()
+    {
+        $notifications = Notification::where('user_login_id', auth()->user()->user_login_id)
+            ->latest('created_at')
+            ->take(10)
+            ->get()
+            ->map(function ($notification) {
+                $user_login_id = $notification->user_login_id; 
+                $folder_name_id = $notification->folder_name_id; 
+                $sender = $notification->sender ? $notification->sender->first_name . ' ' . $notification->sender->surname : 'Unknown';
+
+                return [
+                    'id' => $notification->id,
+                    'sender' => $sender,
+                    'message' => $notification->notification_message,
+                    'created_at' => $notification->created_at->format('F j, Y, g:ia'),
+                    'is_read' => (bool)$notification->is_read,
+                    'url' => route('admin.accomplishment.view-accomplishment', [
+                        'user_login_id' => $user_login_id,
+                        'folder_name_id' => $folder_name_id
+                    ])
+                ];
+            });
+
+        return response()->json(['notifications' => $notifications]);
+    }
 }
