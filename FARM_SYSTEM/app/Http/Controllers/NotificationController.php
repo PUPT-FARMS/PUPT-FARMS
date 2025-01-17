@@ -118,4 +118,13 @@ class NotificationController extends Controller
         
         return response()->json(['status' => 'success']);
     }
+
+    public function markAllAsRead()
+    {
+        Notification::where('user_login_id', auth()->id())
+                   ->where('is_read', 0)
+                   ->update(['is_read' => true]);
+        
+        return response()->json(['status' => 'success']);
+    }
 }
