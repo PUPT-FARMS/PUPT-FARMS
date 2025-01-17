@@ -12,4 +12,5 @@ use App\Models\Announcement;
 use App\Models\Notification;
 use App\Models\LogoutLog;
 use App\Models\LoginLog;
+use App\Models\Department;
 use Carbon\Carbon;
