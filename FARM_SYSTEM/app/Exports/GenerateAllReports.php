@@ -129,4 +129,87 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
 
         return $mappedRow;
     }
+
+    public function styles(Worksheet $sheet)
+    {
+        $lastColumn = $sheet->getHighestColumn();
+        $lastRow = $sheet->getHighestRow();
+        
+        Log::info("Styling sheet. Highest column: {$lastColumn}, Highest row: {$lastRow}");
+        
+        $startCol = 'D';
+        $endCol = $startCol;
+        
+        $folderColors = [
+            'Test Administration' => 'C6EFCE',
+            'Classroom Management' => 'F9C3C3',
+            'Syllabus Preparation' => 'FFEFB6',
+        ];
+        
+        foreach ($this->mainFolders as $mainFolder) {
+            $subFolderCount = count($this->subFolders[$mainFolder]);
+            $endCol = chr(ord($startCol) + $subFolderCount - 1);
+            
+            if (ord($endCol) >= ord($startCol)) {
+                $sheet->setCellValue("{$startCol}1", strtoupper($mainFolder));
+                $sheet->mergeCells("{$startCol}1:{$endCol}1");
+                $sheet->getStyle("{$startCol}1:{$endCol}1")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => $folderColors[$mainFolder]]],
+                    'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+                ]);
+            }
+            
+            $sheet->getStyle("{$startCol}2:{$endCol}2")->applyFromArray([
+                'font' => ['bold' => true],
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => $folderColors[$mainFolder]]],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+            ]);
+            
+            $startCol = chr(ord($endCol) + 1);
+        }
+        
+        $sheet->getRowDimension(1)->setRowHeight(20);
+        $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_NONE],
+        ]);
+        
+        $sheet->setCellValue('A1', '');
+        $sheet->setCellValue('B1', '');
+        $sheet->setCellValue('C1', '');
+        $sheet->setCellValue($lastColumn . '1', '');
+        
+        $sheet->fromArray($this->headings(), null, 'A2');
+       
+        $sheet->getStyle("A2:C2")->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+        ]);
+        
+        $sheet->getStyle("{$lastColumn}2")->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+        ]);
+        
+        $data = $this->collection();
+        $sheet->fromArray($data->map(function ($item) {
+            return $this->map($item);
+        })->toArray(), null, 'A3');
+        
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $sheet->getStyle("A3:{$highestColumn}{$highestRow}")->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+        
+        for ($row = 3; $row <= $lastRow; $row++) {
+            $cellValue = $sheet->getCell("C{$row}")->getValue();
+            Log::info("Row {$row}, Faculty Name: {$cellValue}");
+        }
+        
+        return [];
+    }
 }
