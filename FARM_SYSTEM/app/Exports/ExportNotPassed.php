@@ -55,4 +55,11 @@ class ExportNotPassed implements FromCollection, WithHeadings, WithMapping, With
            
         ];
     }
+
+    public function styles(Worksheet $sheet)
+    {
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+
+        return [];
+    }
 }
