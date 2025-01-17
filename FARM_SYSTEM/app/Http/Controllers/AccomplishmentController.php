@@ -181,4 +181,57 @@ class AccomplishmentController extends Controller
             'currentFolder' => $currentFolder, 
         ]);
     }
+
+    //view academic year
+    public function viewAcademicYear($user_login_id, $folder_name_id)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+    
+        $user = auth()->user();
+        $firstName = $user->first_name;
+        $surname = $user->surname;
+    
+        $notifications = Notification::where('user_login_id', $user->user_login_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        $notificationCount = $notifications->where('is_read', 0)->count();
+    
+        $academicYearsWithFiles = CourseSchedule::select('course_schedules.sem_academic_year')
+            ->join('courses_files', 'course_schedules.course_schedule_id', '=', 'courses_files.course_schedule_id')
+            ->where('course_schedules.user_login_id', $user_login_id)
+            ->where('courses_files.folder_name_id', $folder_name_id)
+            ->distinct()
+            ->orderBy('course_schedules.sem_academic_year', 'desc')
+            ->pluck('sem_academic_year');
+    
+        $folder = FolderName::findOrFail($folder_name_id);
+    
+        $faculty = UserLogin::findOrFail($user_login_id);
+    
+        $department = Department::find($faculty->department_id);
+        $departmentName = $department ? $department->name : '';
+    
+        $folders = FolderName::select('main_folder_name')->distinct()->get();
+        
+        $currentFolder = $folders->firstWhere('main_folder_name', $folder->main_folder_name);
+    
+        return view('admin.accomplishment.view-academic-year', [
+            'allAcademicYears' => $academicYearsWithFiles,
+            'user_login_id' => $user_login_id,
+            'folder_name_id' => $folder_name_id,
+            'folder_name' => $folder->folder_name,
+            'faculty' => $faculty,
+            'notifications' => $notifications,
+            'notificationCount' => $notificationCount,
+            'firstName' => $firstName,
+            'surname' => $surname,
+            'department' => $departmentName,
+            'currentFolder' => $currentFolder,
+            'folders' => $folders,
+            'folder' => $folder, 
+        ]);
+    }
 }
