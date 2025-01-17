@@ -15,4 +15,11 @@ class SendAnnouncementEmails extends Command
      */
     protected $signature = 'send:announcement-emails {announcementId}';
         
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Send announcement emails to the specified recipients';
+    
 }
