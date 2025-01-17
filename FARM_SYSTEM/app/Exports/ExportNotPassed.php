@@ -20,4 +20,13 @@ class ExportNotPassed implements FromCollection, WithHeadings, WithMapping, With
     {
         $this->folderNameId = $folderNameId;
     }
+
+    public function collection()
+    {
+        $submittedUserIds = CoursesFile::where('folder_name_id', $this->folderNameId)
+            ->whereNotNull('user_login_id')
+            ->pluck('user_login_id');
+    
+        return UserLogin::whereNotIn('user_login_id', $submittedUserIds)->get();
+    }
 }
