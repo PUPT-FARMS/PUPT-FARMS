@@ -8,6 +8,7 @@ use App\Models\UserLogin;
 use App\Models\FolderName;
 use App\Models\CoursesFile;
 use App\Models\UserDetails;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Log; 
 
 class NotificationController extends Controller
