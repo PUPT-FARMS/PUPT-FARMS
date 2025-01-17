@@ -20,4 +20,9 @@ class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, W
         $this->folderNameId = $folderNameId;
         $this->faculty = $this->getFacultyInfo();
     }
+
+    public function collection()
+    {
+        return CoursesFile::where('folder_name_id', $this->folderNameId)->get();
+    }
 }
