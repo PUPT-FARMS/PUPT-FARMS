@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('courses_files_id');
             $table->unsignedBigInteger('user_login_id');
             $table->unsignedBigInteger('folder_name_id');
+            $table->string('sender');
             $table->timestamps();
         });
     }
