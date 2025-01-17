@@ -21,6 +21,7 @@ return new class extends Migration
 
             $table->foreign('courses_files_id')->references('courses_files_id')->on('courses_files')->onDelete('cascade');
             $table->foreign('user_login_id')->references('user_login_id')->on('user_login')->onDelete('cascade');
+            $table->foreign('folder_name_id')->references('folder_name_id')->on('folder_name')->onDelete('cascade');
         });
     }
 
