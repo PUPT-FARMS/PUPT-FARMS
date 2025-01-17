@@ -14,3 +14,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+
+class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+{
+   
+    protected $mainFolders;
+    protected $subFolders;
+    protected $semester;
+}
