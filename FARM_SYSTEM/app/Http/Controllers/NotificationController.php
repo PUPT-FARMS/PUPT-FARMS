@@ -127,4 +127,17 @@ class NotificationController extends Controller
         
         return response()->json(['status' => 'success']);
     }
+
+    //log click
+    public function logClick(Request $request)
+    {
+    
+        $request->validate([
+            'notification_id' => 'required|integer|exists:notifications,id',
+        ]);
+
+        Log::info('Notification clicked', ['notification_id' => $request->notification_id, 'user_id' => auth()->user()->user_login_id]);
+
+        return response()->json(['message' => 'Click logged successfully.']);
+    }
 }
