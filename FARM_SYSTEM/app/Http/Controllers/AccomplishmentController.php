@@ -11,4 +11,5 @@ use App\Models\CoursesFile;
 use App\Models\Announcement;
 use App\Models\Notification;
 use App\Models\LogoutLog;
+use App\Models\LoginLog;
 use Carbon\Carbon;
