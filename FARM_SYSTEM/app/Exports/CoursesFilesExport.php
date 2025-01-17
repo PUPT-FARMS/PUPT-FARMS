@@ -25,4 +25,16 @@ class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, W
     {
         return CoursesFile::where('folder_name_id', $this->folderNameId)->get();
     }
+
+    public function headings(): array
+    {
+        return [
+            'Faculty Name',
+            'File Name',
+            'Main Requirements',
+            'Semester',
+            'Subject',
+            'Status',
+        ];
+    }
 }
