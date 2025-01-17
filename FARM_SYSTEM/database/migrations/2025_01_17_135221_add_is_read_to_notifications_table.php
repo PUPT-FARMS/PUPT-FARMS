@@ -9,10 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::table('notifications', function (Blueprint $table) {
-            //
+            $table->boolean('is_read')->default(false);
         });
     }
 
