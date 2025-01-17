@@ -37,4 +37,18 @@ class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, W
             'Status',
         ];
     }
+
+    public function map($coursesFile): array
+    {
+        return [
+            $this->faculty['faculty']['first_name'] . ' ' . 
+            $this->faculty['faculty']['middle_name'] . ' ' . 
+            $this->faculty['faculty']['last_name'],
+            $coursesFile->original_file_name,
+            $coursesFile->folderName->folder_name ?? 'Unknown Folder',
+            $coursesFile->semester,
+            $coursesFile->subject,
+            $coursesFile->status,
+        ];
+    }
 }
