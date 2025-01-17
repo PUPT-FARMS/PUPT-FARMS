@@ -220,4 +220,14 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
             ->orderBy('first_name')
             ->get();
     }
+
+    private function getLatestSubmissionDate($facultyId)
+    {
+        $latestFile = CoursesFile::where('user_login_id', $facultyId)
+            ->where('semester', $this->semester)
+            ->latest('created_at')
+            ->first();
+
+        return $latestFile ? Carbon::parse($latestFile->created_at)->setTimezone('Asia/Manila')->format('F d, Y, h:i A') : 'N/A';
+    }
 }
