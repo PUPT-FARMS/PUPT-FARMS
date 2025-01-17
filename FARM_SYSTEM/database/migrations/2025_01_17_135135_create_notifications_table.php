@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+        public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_login_id');
             $table->unsignedBigInteger('folder_name_id');
             $table->string('sender');
+            $table->text('notification_message');
             $table->timestamps();
 
             $table->foreign('courses_files_id')->references('courses_files_id')->on('courses_files')->onDelete('cascade');
@@ -25,11 +26,9 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('notifications');
     }
+
 };
