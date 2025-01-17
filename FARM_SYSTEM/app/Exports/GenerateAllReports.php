@@ -92,4 +92,16 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
 
         return $headers;
     }
+
+    private function getFileCount($facultyId, $folderNameId)
+    {
+        $count = CoursesFile::where('folder_name_id', $folderNameId)
+            ->where('user_login_id', $facultyId)
+            ->where('semester', $this->semester)
+            ->count();
+        
+        Log::info("File count for faculty {$facultyId}, folder {$folderNameId}: {$count}");
+        
+        return $count;
+    }
 }
