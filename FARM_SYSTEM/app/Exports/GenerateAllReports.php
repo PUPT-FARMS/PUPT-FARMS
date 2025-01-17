@@ -40,4 +40,41 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
                 ->toArray();
         }
     }
+
+    public function collection()
+    {
+        $facultyMembers = $this->getAllFaculty();
+        
+        Log::info('Number of faculty members: ' . $facultyMembers->count());
+        
+        $data = collect();
+        
+        foreach ($facultyMembers as $index => $faculty) {
+            Log::info('Processing faculty member: ' . $faculty->first_name . ' ' . $faculty->surname);
+            
+            $rowData = [
+                'no' => $index + 1,
+                'date_submitted' => $this->getLatestSubmissionDate($faculty->user_login_id),
+                'faculty_name' => $faculty->first_name . ' ' . $faculty->surname,
+            ];
+            
+            foreach ($this->mainFolders as $mainFolder) {
+                foreach ($this->subFolders[$mainFolder] as $folderNameId => $folderName) {
+                    $fileCount = $this->getFileCount($faculty->user_login_id, $folderNameId);
+                    $rowData[$folderName] = $fileCount;
+                    Log::info("Faculty: {$faculty->surname}, Folder: {$folderName}, Count: {$fileCount}");
+                }
+            }
+            
+            $rowData['semester'] = $this->semester;
+            
+            $data->push($rowData);
+            Log::info('Added row data for faculty: ' . $faculty->surname);
+        }
+        
+        Log::info('Number of rows in final data collection: ' . $data->count());
+        Log::info('Data collection: ' . json_encode($data));
+        
+        return $data;
+    }
 }
