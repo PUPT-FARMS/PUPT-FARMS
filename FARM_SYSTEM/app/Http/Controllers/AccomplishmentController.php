@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\UserLogin;
 use App\Models\FolderName;
+use App\Models\CoursesFile;
 use Carbon\Carbon;
