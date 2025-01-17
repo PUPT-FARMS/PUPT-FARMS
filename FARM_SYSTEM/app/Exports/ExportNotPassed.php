@@ -29,4 +29,12 @@ class ExportNotPassed implements FromCollection, WithHeadings, WithMapping, With
     
         return UserLogin::whereNotIn('user_login_id', $submittedUserIds)->get();
     }
+
+    public function headings(): array
+    {
+        return [
+            'Faculty Name',
+            'Main Requirements',
+        ];
+    }
 }
