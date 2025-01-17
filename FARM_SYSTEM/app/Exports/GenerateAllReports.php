@@ -77,4 +77,19 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
         
         return $data;
     }
+
+    public function headings(): array
+    {
+        $headers = ['No.', 'Date Submitted', 'Faculty Name'];
+
+        foreach ($this->mainFolders as $mainFolder) {
+            foreach ($this->subFolders[$mainFolder] as $folderName) {
+                $headers[] = $folderName;
+            }
+        }
+
+        $headers[] = 'Semester';
+
+        return $headers;
+    }
 }
