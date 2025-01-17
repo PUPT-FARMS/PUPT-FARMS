@@ -32,6 +32,9 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
 
         $notPassedFolderIds = $folderIds->diff($submittedFolderIds);
         \Log::info('Not Passed Folder IDs:', $notPassedFolderIds->toArray());
+
+        $facultyMembers = UserLogin::where('role', 'faculty')->get();
+        \Log::info('Faculty Members:', $facultyMembers->toArray());
     }
 
 }
