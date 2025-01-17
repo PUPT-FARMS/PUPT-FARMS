@@ -68,4 +68,27 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
         ];
     }
 
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet;
+                
+                $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+                $sheet->getDelegate()->getColumnDimension('A')->setAutoSize(true);
+                $sheet->getDelegate()->getColumnDimension('B')->setAutoSize(true);
+                $sheet->getDelegate()->getColumnDimension('C')->setAutoSize(true);
+                $sheet->getDelegate()->getColumnDimension('D')->setAutoSize(true);
+                
+                $maxWidth = 50;
+                foreach ($sheet->getColumnDimensions() as $column) {
+                    if ($column->getWidth() > $maxWidth) {
+                        $column->setWidth($maxWidth);
+                        $column->setAutoSize(false);
+                    }
+                }
+            },
+        ];
+    }
+
 }
