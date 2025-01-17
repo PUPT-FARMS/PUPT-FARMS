@@ -51,4 +51,11 @@ class CoursesFilesExport implements FromCollection, WithHeadings, WithMapping, W
             $coursesFile->status,
         ];
     }
+
+    public function styles(Worksheet $sheet)
+    {
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+        return [];
+    }
 }
