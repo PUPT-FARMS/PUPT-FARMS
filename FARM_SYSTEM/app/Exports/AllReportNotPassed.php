@@ -35,6 +35,27 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
 
         $facultyMembers = UserLogin::where('role', 'faculty')->get();
         \Log::info('Faculty Members:', $facultyMembers->toArray());
+
+        $notPassedFaculty = collect();
+
+        foreach ($facultyMembers as $faculty) {
+            $notPassedFolders = FolderName::whereIn('folder_name_id', $notPassedFolderIds)->get();
+            foreach ($notPassedFolders as $folder) {
+                $notPassedFaculty->push([
+                    'full_name' => $this->facultyInfo['faculty']['first_name'] . ' ' . 
+                                   $this->facultyInfo['faculty']['middle_name'] . ' ' . 
+                                   $this->facultyInfo['faculty']['last_name'],
+                                   'main_folder_name' => $folder->main_folder_name,  
+                    'not_passed_folder' => $folder->folder_name,
+            
+                    'semester' => $this->facultyInfo['faculty']['subjects'][0]['semester']['semester'] 
+                ]);
+            }
+        }
+
+        \Log::info('Not Passed Faculty:', $notPassedFaculty->toArray());
+
+        return $notPassedFaculty;
     }
 
 }
