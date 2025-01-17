@@ -21,4 +21,23 @@ class GenerateAllReports implements FromCollection, WithHeadings, WithMapping, W
     protected $mainFolders;
     protected $subFolders;
     protected $semester;
+
+    public function __construct($semester)
+    {
+        $this->semester = $semester;
+        
+        $this->mainFolders = ['Test Administration', 'Classroom Management', 'Syllabus Preparation'];
+        
+        $allFolders = FolderName::orderBy('main_folder_name')
+            ->orderBy('folder_name')
+            ->get();
+        
+        $this->subFolders = [];
+        foreach ($this->mainFolders as $mainFolder) {
+            $this->subFolders[$mainFolder] = $allFolders
+                ->where('main_folder_name', $mainFolder)
+                ->pluck('folder_name', 'folder_name_id')
+                ->toArray();
+        }
+    }
 }
