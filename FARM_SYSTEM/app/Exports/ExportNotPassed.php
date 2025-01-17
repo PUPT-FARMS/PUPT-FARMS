@@ -15,4 +15,9 @@ use App\Models\FolderName;
 class ExportNotPassed implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $folderNameId;
+
+    public function __construct($folderNameId)
+    {
+        $this->folderNameId = $folderNameId;
+    }
 }
