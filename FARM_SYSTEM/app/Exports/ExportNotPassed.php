@@ -37,4 +37,22 @@ class ExportNotPassed implements FromCollection, WithHeadings, WithMapping, With
             'Main Requirements',
         ];
     }
+
+    public function map($userLogin): array
+    {
+        $facultyInfo = $this->getFacultyInfo();
+        $faculty = $facultyInfo['faculty'];
+    
+        $coursesFile = CoursesFile::where('folder_name_id', $this->folderNameId)
+            ->where('user_login_id', $userLogin->user_login_id)
+            ->first();
+
+        return [
+            $faculty['first_name'] . ' ' . 
+            $faculty['middle_name'] . ' ' . 
+            $faculty['last_name'],
+            FolderName::find($this->folderNameId)->folder_name ?? 'Unknown Folder',
+           
+        ];
+    }
 }
