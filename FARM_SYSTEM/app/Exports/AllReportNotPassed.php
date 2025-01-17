@@ -58,4 +58,14 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
         return $notPassedFaculty;
     }
 
+    public function headings(): array
+    {
+        return [
+            'Full Name',
+            'Main Requirements',
+            'Folder Name',
+            'Semester',
+        ];
+    }
+
 }
