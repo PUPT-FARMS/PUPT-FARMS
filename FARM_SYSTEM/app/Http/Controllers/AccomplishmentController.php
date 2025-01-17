@@ -99,4 +99,43 @@ class AccomplishmentController extends Controller
             'folderName' => $folder->folder_name
         ]);
     }
+
+    //show main requirements
+    public function viewFacultyAccomplishments($user_login_id)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+    
+        $user = auth()->user();
+        $firstName = $user->first_name;
+        $surname = $user->surname;
+    
+        $notifications = Notification::where('user_login_id', $user->user_login_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        $notificationCount = $notifications->where('is_read', 0)->count();
+    
+        $faculty = UserLogin::findOrFail($user_login_id);
+    
+        $folders = FolderName::select('main_folder_name')->distinct()->get(); 
+    
+        $department = Department::find($faculty->department_id);
+        $departmentName = $department ? $department->name : '';
+    
+        $facultyUsers = UserLogin::whereIn('role', ['faculty', 'faculty-coordinator']) 
+            ->where('department_id', $faculty->department_id) 
+            ->get();
+    
+        return view('admin.accomplishment.main-folder', [
+            'faculty' => $faculty,
+            'folders' => $folders,
+            'notifications' => $notifications,
+            'notificationCount' => $notificationCount,
+            'firstName' => $firstName,
+            'surname' => $surname,
+            'department' => $departmentName,
+        ]);
+    }
 }
