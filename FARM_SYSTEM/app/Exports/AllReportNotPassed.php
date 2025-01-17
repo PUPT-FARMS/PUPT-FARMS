@@ -29,6 +29,9 @@ class AllReportNotPassed implements FromCollection, WithHeadings, WithEvents, Sh
             ->pluck('folder_name_id')
             ->unique();
         \Log::info('Submitted Folder IDs:', $submittedFolderIds->toArray());
+
+        $notPassedFolderIds = $folderIds->diff($submittedFolderIds);
+        \Log::info('Not Passed Folder IDs:', $notPassedFolderIds->toArray());
     }
 
 }
